@@ -11,4 +11,5 @@ HX_REPAIR - My second big boy release
 - Unlimited locations and different prices
 - Configurable blips
 
-[Preview (Closest thing to a preview I have)]()
+[Preview (Closest thing to a preview I have)](https://youtu.be/eRKDkvIwBog)
+[Discord](https://discord.gg/6fNy49PZbC)
