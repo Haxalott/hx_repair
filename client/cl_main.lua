@@ -1,3 +1,8 @@
+colors = {
+    body = '',
+    engine = ''
+}
+
 ---@param vehicle any
 function repairVehicle(vehicle)
     SetVehicleFixed(vehicle)
@@ -72,7 +77,7 @@ end)
 -- Payment method creation
 
 ---@param amount integer
-function payment(amount)
+function payment(amount, type)
     local bank, cash = lib.callback.await('hx_repair:server:getPayment', false)
     print(bank, cash)
     local paymentMenu = {}
@@ -82,7 +87,22 @@ function payment(amount)
                 title = L['BANK_TITLE'],
                 description = L['BANK_DESC'],
                 icon = 'building-columns',
-                iconColor = '#00FF00',
+                iconColor = '#48A860',
+                metadata = {
+                    {label = L['AMOUNT_METADATA'], value = amount}
+                },
+                onSelect = function()
+                    TriggerServerEvent('hx_repair:server:payment', 'bank', amount)
+                    repairProgress()
+                end,
+            }
+        elseif bank < amount then
+            paymentMenu[#paymentMenu+1] = {
+                title = L['BANK_TITLE'],
+                description = L['NOT_ENOUGH_FUNDS_DESC'],
+                icon = 'building-columns',
+                iconColor = '#48A860',
+                disabled = true,
                 metadata = {
                     {label = L['AMOUNT_METADATA'], value = amount}
                 },
@@ -97,7 +117,7 @@ function payment(amount)
                 title = L['CASH_TITLE'],
                 description = L['CASH_DESC'],
                 icon = 'wallet',
-                iconColor = '#00FF00',
+                iconColor = '#48A860',
                 metadata = {
                     {label = L['AMOUNT_METADATA'], value = amount}
                 },
@@ -105,6 +125,55 @@ function payment(amount)
                     TriggerServerEvent('hx_repair:server:payment', 'cash', amount)
                     repairProgress()
                 end,
+            }
+        elseif cash < amount then
+            paymentMenu[#paymentMenu+1] = {
+                title = L['CASH_TITLE'],
+                description = L['NOT_ENOUGH_FUNDS_DESC'],
+                icon = 'wallet',
+                iconColor = '#48A860',
+                disabled = true,
+                metadata = {
+                    {label = L['AMOUNT_METADATA'], value = amount}
+                },
+                onSelect = function()
+                    TriggerServerEvent('hx_repair:server:payment', 'cash', amount)
+                    repairProgress()
+                end,
+            }
+        end
+        if Config.EnableVehicleHealthInPayment.engine then
+            if math.floor(GetVehicleEngineHealth(cache.vehicle) / 10) > 50 then
+                colors.engine = 'green'
+            elseif math.floor(GetVehicleEngineHealth(cache.vehicle) / 10) <= 50 then
+                colors.engine = 'orange'
+            elseif math.floor(GetVehicleEngineHealth(cache.vehicle) / 10) < 20 then
+                colors.engine = 'red'
+            end
+            paymentMenu[#paymentMenu+1] = {
+                title = L['ENGINE_HEALTH'],
+                description = L['ENGINE_HEALTH_DESC'],
+                icon = 'car',
+                iconColor = '#48A860',
+                progress = math.floor(GetVehicleEngineHealth(cache.vehicle) / 10),
+                colorScheme = colors.engine
+            }
+        end
+        if Config.EnableVehicleHealthInPayment.body then
+            if math.floor(GetVehicleBodyHealth(cache.vehicle) / 10) > 50 then
+                colors.body = 'green'
+            elseif math.floor(GetVehicleBodyHealth(cache.vehicle) / 10) <= 50 then
+                colors.body = 'orange'
+            elseif math.floor(GetVehicleEngineHealth(cache.vehicle) / 10) < 20 then
+                colors.body = 'red'
+            end
+            paymentMenu[#paymentMenu+1] = {
+                title = L['BODY_HEALTH'],
+                description = L['BODY_HEALTH_DESC'],
+                icon = 'car',
+                iconColor = '#48A860',
+                progress = math.floor(GetVehicleBodyHealth(cache.vehicle) / 10),
+                colorScheme = colors.body
             }
         end
         if cash >= amount or bank >= amount then
@@ -175,4 +244,11 @@ CreateThread(function()
     else
         return
     end
+end)
+
+RegisterCommand('testvehiclehealth', function()
+    local engineHealth = GetVehicleEngineHealth(cache.vehicle)
+    local bodyHealth = GetVehicleBodyHealth(cache.vehicle)
+    print(engineHealth)
+    print(('Body Health %s'):format(math.floor(bodyHealth / 10)))
 end)
