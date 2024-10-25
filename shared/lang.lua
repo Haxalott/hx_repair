@@ -17,5 +17,10 @@ L = {
     ['WASH_CAR_TARGET'] = 'Wash Vehicle',
     ['WASH_PROG_LABEL'] = 'Washing Vehicle...',
     ['WASH_TITLE'] = 'Car Wash',
-    ['WASH_DESCRIPTION_SUCCESS'] = 'Car Washed Successfully'
+    ['WASH_DESCRIPTION_SUCCESS'] = 'Car Washed Successfully',
+    ['NOT_ENOUGH_FUNDS_DESC'] = 'You do not have enough money to use this payment method',
+    ['ENGINE_HEALTH'] = 'Engine Health',
+    ['ENGINE_HEALTH_DESC'] = 'The engine health of the car you\'re in',
+    ['BODY_HEALTH'] = 'Body Health',
+    ['BODY_HEALTH_DESC'] = 'The body health of the car you\'re in'
 }
