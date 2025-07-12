@@ -18,3 +18,5 @@ Go to ox_inventory/data/items.lua and add this at the very bottom
 - Configurable blips
 
 :movie_camera: [Preview](https://youtu.be/eRKDkvIwBog)
+
+V2 Being worked on
